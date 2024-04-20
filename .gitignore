@@ -31,6 +31,9 @@ node_modules/
 # TypeScript cache
 *.tsbuildinfo
 
+# built Typescript
+/target
+
 # Optional npm cache directory
 .npm
 
