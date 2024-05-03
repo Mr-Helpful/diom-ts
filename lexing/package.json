@@ -1,0 +1,26 @@
+{
+  "name": "diom-lexing",
+  "version": "0.1.0",
+  "description": "Token based lexing for the Diom compiler",
+  "main": "src/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node --test test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Mr-Helpful/diom-ts.git"
+  },
+  "keywords": [
+    "compilers",
+    "lexing"
+  ],
+  "author": "alexanderdcolby@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Mr-Helpful/diom-ts/issues"
+  },
+  "homepage": "https://github.com/Mr-Helpful/diom-ts#readme"
+}

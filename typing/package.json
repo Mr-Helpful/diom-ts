@@ -1,0 +1,19 @@
+{
+  "name": "diom-typing",
+  "version": "0.1.0",
+  "description": "Type checking for the Diom compiler",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node --test test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/Mr-Helpful/diom-ts"
+  },
+  "keywords": [
+    "compilers",
+    "types"
+  ],
+  "author": "alexanderdcolby@gmail.com",
+  "license": "MIT"
+}

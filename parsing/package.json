@@ -1,0 +1,31 @@
+{
+  "name": "diom-parsing",
+  "version": "0.1.0",
+  "description": "Parsing for the Diom compiler",
+  "main": "src/index.js",
+  "type": "module",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "main": "node src",
+    "test": "node --test test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Mr-Helpful/diom-ts.git"
+  },
+  "keywords": [
+    "compilers",
+    "parsing"
+  ],
+  "author": "alexanderdcolby@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Mr-Helpful/diom-ts/issues"
+  },
+  "homepage": "https://github.com/Mr-Helpful/diom-ts#readme",
+  "dependencies": {
+    "parjs": "^1.3.2"
+  }
+}
