@@ -1,0 +1,26 @@
+{
+	"nodes":[
+		{"id":"d623e46f562c4f09","type":"group","x":474,"y":-106,"width":400,"height":426,"label":"Syntax"},
+		{"id":"c9ba003402072e8d","type":"group","x":874,"y":-106,"width":400,"height":426,"label":"Semantics"},
+		{"id":"a9c0d608d9ffad83","type":"group","x":1274,"y":-106,"width":400,"height":426,"label":"Compiler"},
+		{"id":"3955b1b0370d6271","type":"link","url":"https://www.youtube.com/watch?v=o5K0uqhxgsE&t=929s","x":-472,"y":-442,"width":640,"height":360},
+		{"id":"8712648b7b102c47","type":"text","text":"[[Expression Based]]","x":499,"y":-82,"width":199,"height":60},
+		{"id":"7786e3ba2d15cef6","type":"text","text":"[[Single line code]]","x":499,"y":0,"width":203,"height":60},
+		{"id":"7df03f171dbc7a08","type":"text","text":"[[Implicit `.` in methods]]","x":499,"y":80,"width":240,"height":60},
+		{"id":"882622797c75fc38","type":"text","text":"Make sure you explicitly state your goals.","x":-277,"y":50,"width":250,"height":60},
+		{"id":"eff85fea25c67ab4","type":"text","text":"What do I want from the language?","x":100,"y":50,"width":213,"height":60},
+		{"id":"80f48f673d6daf51","type":"text","text":"[[Simplified function calls]]","x":499,"y":160,"width":243,"height":60},
+		{"id":"5358a92ec882027b","type":"text","text":"[[Monads]]","x":499,"y":240,"width":140,"height":60},
+		{"id":"7355de31d98a4cd8","type":"text","text":"[[Operator overloading]]","x":900,"y":-82,"width":230,"height":60},
+		{"id":"c31d7bd6e75ef379","type":"text","text":"[[Function overloading]]","x":900,"y":0,"width":230,"height":60},
+		{"id":"0cd06b495278fa86","type":"text","text":"[[Traits]]","x":900,"y":80,"width":115,"height":60},
+		{"id":"9ea43f1c82766496","type":"text","text":"[[Mutability Marking]]","x":1300,"y":-82,"width":210,"height":60},
+		{"id":"3803509d415551dc","type":"text","text":"[[Lazy Evaluation]]","x":1300,"y":0,"width":194,"height":60},
+		{"id":"e5989919ad47b89d","type":"text","text":"Automated Parallelism","x":1300,"y":80,"width":247,"height":60}
+	],
+	"edges":[
+		{"id":"323c1a3e90f46104","fromNode":"882622797c75fc38","fromSide":"right","toNode":"eff85fea25c67ab4","toSide":"left"},
+		{"id":"112f298cd7ac4234","fromNode":"eff85fea25c67ab4","fromSide":"right","toNode":"d623e46f562c4f09","toSide":"left"},
+		{"id":"58d124b83689f139","fromNode":"3955b1b0370d6271","fromSide":"bottom","toNode":"882622797c75fc38","toSide":"top"}
+	]
+}
