@@ -1,0 +1,29 @@
+{
+  "name": "diom-combinators",
+  "version": "0.1.0",
+  "description": "Expressive parser combinators for the Diom compiler",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "main": "node src",
+    "test": "node --test test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Mr-Helpful/diom-ts.git"
+  },
+  "keywords": [
+    "compilers",
+    "combinators"
+    "parsing",
+  ],
+  "author": "alexanderdcolby@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Mr-Helpful/diom-ts/issues"
+  },
+  "homepage": "https://github.com/Mr-Helpful/diom-ts#readme",
+  "dependencies": {
+    "dedent": "^1.5.3"
+  }
+}
