@@ -6,20 +6,20 @@ export interface Result<T, E> {
   toString(): String
   [inspect.custom](): String
 
-  /** Whether this result contains the `ok` variant */
+  /** Whether this result contains the `Ok` variant */
   is_ok: boolean
-  /** Whether this result contains the `err` variant */
+  /** Whether this result contains the `Err` variant */
   is_err: boolean
-  /** Whether the `ok` variant satisfies `f` */
+  /** Whether the `Ok` variant satisfies `f` */
   is_ok_and(f: (value: T) => boolean): boolean
-  /** Whether the `err` variant satisfies `f` */
+  /** Whether the `Err` variant satisfies `f` */
   is_err_and(f: (error: E) => boolean): boolean
 
-  /** Unwraps the `ok` value or throws the contained error */
+  /** Unwraps the `Ok` value or throws the contained error */
   unwrap(): T
   /** Unwraps the contained value or returns default value `d` */
   unwrap_or(d: T): T
-  /** Unwraps the `err` value or throws a generic error */
+  /** Unwraps the `Err` value or throws a generic error */
   unwrap_err(): E
 
   /** Modifies the contained value of a `Result` */
@@ -41,8 +41,8 @@ export interface Result<T, E> {
   zip(res: Result<T, E>): Result<[T, T], E>
 }
 
-export type ResultFrom<T,E> = T | Result<T,E>
+export type ResultFrom<T, E> = T | Result<T, E>
 
 export type ResultWrapper<E extends Error = Error> = <Args extends any[], T>(
   f: (...args: Args) => T
-) => (...args: Args) => T extends Result<any,E> ? T : Result<T, E>
+) => (...args: Args) => T extends Result<any, E> ? T : Result<T, E>

@@ -24,10 +24,10 @@ const isResult = value =>
  * @template T,E
  * @type {(value: T) => Result<T,E>}
  */
-const ok = value => ({
+const Ok = value => ({
   [ResultSymbol]: true,
 
-  toString: () => `Result.ok(${value})`,
+  toString: () => `Result.Ok(${value})`,
   [inspect.custom]() {
     return this.toString()
   },
@@ -43,15 +43,15 @@ const ok = value => ({
     throw Error(`Unable to unwrap error from ${this}`)
   },
 
-  map: f => ok(f(value)),
-  map_err: _ => ok(value),
+  map: f => Ok(f(value)),
+  map_err: _ => Ok(value),
   map_or: (f, _) => f(value),
 
   then: f => f(value),
-  then_err: _ => ok(value),
+  then_err: _ => Ok(value),
   then_wrap: f => wrap(f)(value),
 
-  or: _ => ok(value),
+  or: _ => Ok(value),
   zip: res => res.map(other => [value, other])
 })
 
@@ -61,10 +61,10 @@ const ok = value => ({
  * @template T,E
  * @type {(error: E) => Result<T,E>}
  */
-const err = error => ({
+const Err = error => ({
   [ResultSymbol]: true,
 
-  toString: () => `Result.err(${error})`,
+  toString: () => `Result.Err(${error})`,
   [inspect.custom]() {
     return this.toString()
   },
@@ -80,39 +80,39 @@ const err = error => ({
   unwrap_or: d => d,
   unwrap_err: () => error,
 
-  map: _ => err(error),
-  map_err: f => err(f(error)),
+  map: _ => Err(error),
+  map_err: f => Err(f(error)),
   map_or: (_, d) => d,
 
-  then: _ => err(error),
+  then: _ => Err(error),
   then_err: f => f(error),
-  then_wrap: _ => err(error),
+  then_wrap: _ => Err(error),
 
   or: res => res,
-  zip: _ => err(error)
+  zip: _ => Err(error)
 })
 
 /**
  * A function that generates the `wrap` function
- * for a given `ok` and `err` variant
+ * for a given `Ok` and `Err` variant
  * @template T,E
- * @param {(value: T) => Result<T, E>} ok the `ok` variant
- * @param {(error: E) => Result<T, E>} err the `err` variant
+ * @param {(value: T) => Result<T, E>} Ok the `Ok` variant
+ * @param {(error: E) => Result<T, E>} Err the `Err` variant
  */
-export function wrap_factory(ok, err) {
+export function wrap_factory(Ok, Err) {
   /**
    * Wraps a function to return a `Result`
    * @type {ResultWrapper}
    * @param f the function to wrap
-   * @return the wrapped function, will return `Result.err` if the function throws an `Error`, otherwise returns `Result.ok`
+   * @return the wrapped function, will return `Result.Err` if the function throws an `Error`, otherwise returns `Result.Ok`
    */
   return function wrap(f) {
     return (...args) => {
       try {
         const result = f(...args)
-        return isResult(result) ? result : ok(result)
+        return isResult(result) ? result : Ok(result)
       } catch (e) {
-        if (e instanceof Error) return err(e)
+        if (e instanceof Error) return Err(e)
         throw new TypeError(dedent`
           Wrapped function did not throw a subclass of \`Error\`
           it instead threw \`${e}\`.
@@ -123,5 +123,5 @@ export function wrap_factory(ok, err) {
   }
 }
 
-const Result = { isResult, ok, err, wrap: wrap_factory(ok, err) }
+const Result = { isResult, Ok, Err, wrap: wrap_factory(Ok, Err) }
 export { Result }

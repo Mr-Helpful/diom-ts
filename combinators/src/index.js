@@ -18,7 +18,7 @@ import { Stream } from './stream'
  * @param {E} error
  */
 export function parse_failure(input, error) {
-  return Result.err(new ParseError(input, error))
+  return Result.Err(new ParseError(input, error))
 }
 
 /**
@@ -81,7 +81,7 @@ export class Parser extends Function {
    * @return {Parser<I,O,E>}
    */
   static success(output) {
-    return new Parser(input => Result.ok([input, output]))
+    return new Parser(input => Result.Ok([input, output]))
   }
 
   /** Trivially fails with `error`
@@ -89,7 +89,7 @@ export class Parser extends Function {
    * @return {Parser<I,O,E>}
    */
   static failure(error) {
-    return new Parser(input => Result.err(new ParseError(input, error)))
+    return new Parser(input => Result.Err(new ParseError(input, error)))
   }
 
   /** Consumes an item and throws if it doesn't match `f`
@@ -176,7 +176,7 @@ export class Parser extends Function {
         }
       }
 
-      return Result.err(recoverable)
+      return Result.Err(recoverable)
     })
   }
 
