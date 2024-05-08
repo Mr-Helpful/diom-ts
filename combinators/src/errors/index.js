@@ -5,32 +5,48 @@ import { Stream } from '../stream'
 /** A ParseError should:
  * 1. have a position that it occurs at
  * 2. contain all expected next values
- * @template {string}[I=string]
+ * @template {{toString(): string}} I
  * @template {Error} E
  */
 export class ParseError extends SyntaxError {
   /** @type {string[]} */
   #trace = []
-  /** @type {Error[]} */
-  #errors = []
+  /** @type {Map<string,E extends {push(...items: E[]): void} ? E : E[]>} */
+  #errors = {}
   /** @type {Stream<I>} */
   #input
 
   /**
    * @constructor
    * @param {Stream<I>} input
+   * @param {E} error
    */
-  constructor(input) {
+  constructor(input, error) {
+    super()
     this.#input = input
+    this.push(error)
+  }
+
+  /** Converts from input and error values into a ParseError
+   * @param {I} input
+   * @param {Error} err
+   */
+  static from(input, err) {
+    return typeof err === 'object' && err instanceof ParseError
+      ? err
+      : new ParseError(input, err)
   }
 
   toString() {
     const parser = this.#trace.at(-1) ?? '<unknown>'
-    const current = this.#input.current ?? '<EOF>'
+    const current = this.#input.current?.toString() ?? '<EOF>'
     const trace_str = this.#trace.join(' -> ') || '<empty>'
+    const error_str = Array.from(this.#errors.values()).map(err =>
+      err instanceof Array ? err.map(err => `- ${err}`).join('\n') : `${err}`
+    )
     return dedent`
       ParseError: parser ${parser} failed at ${current}, due to:
-      ${this.#errors}
+      ${error_str}
       help: traceback = ${trace_str}
     `
   }
@@ -62,45 +78,33 @@ export class ParseError extends SyntaxError {
 
   /** Combines this error with another and returns the result.
    * Pretty much solely used by the `alt` combinator to accumulate errors
-   * @param {this} error the error to merge with
-   * @return {this} for use in method chaining
+   * @template E2
+   * @param {E2} error the error to merge with
+   * @return {ParseError<I,E|E2>} for use in method chaining
    */
-  add(error) {
-    // @todo come up with a better version of merging errors
-    // it should ideally merge errors of the same type, simplifying them
-    // and should produce nicer errors when `console.log`ing
-    this.#errors.push(error)
+  push(error) {
+    if (this.#errors[error.name] !== undefined) {
+      this.#errors[error.name].push(error)
+    } else if (typeof error.push === 'function') {
+      this.#errors[error.name] = error
+    } else {
+      this.#errors[error.name] = [error]
+    }
+    return this
   }
-}
 
-/** @template I */
-export class ItemMismatch extends ParseError {
-  /** @type {Set<I>} */
-  #expected
-
-  /**
-   * @constructor
-   * @param {Stream<I>} input the remaining input to the parser
-   * @param {I} expected the next character expected by the parser
+  /** Replaces all current errors with the given error
+   * @template E2
+   * @param {E2} error the error to replace with
+   * @return {ParseError<I, E2>} for use in method chaining
    */
-  constructor(expected) {
-    this.#expected = new Set([expected])
-  }
-
-  toString() {
-    const expected = Array.from(this.#expected.values())
-    return dedent`ItemMismatch expected one of [${expected}].`
-  }
-  [inspect.custom]() {
-    return this.toString()
-  }
-
-  /** Combines this error with another and returns the result
-   * @param {this} error the error to merge with
-   * @return {this} for use in method chaining
-   */
-  add(error) {
-    error.#expected.forEach(e => this.#expected.add(e))
+  replace(error) {
+    this.#errors = {}
+    this.push(error)
     return this
   }
 }
+
+export { EofError } from './eof'
+export { MismatchError } from './mismatch'
+export { PredicateError } from './predicate'

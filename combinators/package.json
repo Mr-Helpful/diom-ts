@@ -14,8 +14,8 @@
   },
   "keywords": [
     "compilers",
-    "combinators"
-    "parsing",
+    "combinators",
+    "parsing"
   ],
   "author": "alexanderdcolby@gmail.com",
   "license": "MIT",

@@ -9,6 +9,15 @@ import dedent from 'dedent'
  * @typedef {import("./types").ResultWrapper} ResultWrapper
  */
 
+const ResultSymbol = Symbol('Result')
+
+/** Tests whether a value is a Result
+ * @param value
+ * @return {value is Result<any,any>}
+ */
+const isResult = value =>
+  typeof value === 'object' && value[ResultSymbol] === true
+
 /**
  * Ok variant for the `Result` type.
  * Represents a successful operation.
@@ -16,6 +25,8 @@ import dedent from 'dedent'
  * @type {(value: T) => Result<T,E>}
  */
 const ok = value => ({
+  [ResultSymbol]: true,
+
   toString: () => `Result.ok(${value})`,
   [inspect.custom]() {
     return this.toString()
@@ -28,7 +39,9 @@ const ok = value => ({
 
   unwrap: () => value,
   unwrap_or: _ => value,
-  unwrap_err(){ throw Error(`Unable to unwrap error from ${this}`) },
+  unwrap_err() {
+    throw Error(`Unable to unwrap error from ${this}`)
+  },
 
   map: f => ok(f(value)),
   map_err: _ => ok(value),
@@ -49,6 +62,8 @@ const ok = value => ({
  * @type {(error: E) => Result<T,E>}
  */
 const err = error => ({
+  [ResultSymbol]: true,
+
   toString: () => `Result.err(${error})`,
   [inspect.custom]() {
     return this.toString()
@@ -94,12 +109,13 @@ export function wrap_factory(ok, err) {
   return function wrap(f) {
     return (...args) => {
       try {
-        return ok(f(...args))
+        const result = f(...args)
+        return isResult(result) ? result : ok(result)
       } catch (e) {
         if (e instanceof Error) return err(e)
         throw new TypeError(dedent`
           Wrapped function did not throw a subclass of \`Error\`
-          it instead returned \`${e}\`.
+          it instead threw \`${e}\`.
           help: try implementing a custom error type that extends \`Error\`
         `)
       }
@@ -107,5 +123,5 @@ export function wrap_factory(ok, err) {
   }
 }
 
-const Result = { ok, err, wrap: wrap_factory(ok, err) }
+const Result = { isResult, ok, err, wrap: wrap_factory(ok, err) }
 export { Result }

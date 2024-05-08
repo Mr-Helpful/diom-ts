@@ -41,6 +41,8 @@ export interface Result<T, E> {
   zip(res: Result<T, E>): Result<[T, T], E>
 }
 
-export type ResultWrapper<E extends Error = Error> = <T, Args extends any[]>(
+export type ResultFrom<T,E> = T | Result<T,E>
+
+export type ResultWrapper<E extends Error = Error> = <Args extends any[], T>(
   f: (...args: Args) => T
-) => (...args: Args) => Result<T, E>
+) => (...args: Args) => T extends Result<any,E> ? T : Result<T, E>
