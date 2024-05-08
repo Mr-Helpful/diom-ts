@@ -1,5 +1,6 @@
 import { inspect } from 'node:util'
 import dedent from 'dedent'
+import { Option } from '../option'
 
 /**
  * @template T,E
@@ -19,7 +20,7 @@ const isResult = value =>
   typeof value === 'object' && value[ResultSymbol] === true
 
 /**
- * Ok variant for the `Result` type.
+ * `Ok` variant for the `Result` type.
  * Represents a successful operation.
  * @template T,E
  * @type {(value: T) => Result<T,E>}
@@ -52,11 +53,14 @@ const Ok = value => ({
   then_wrap: f => wrap(f)(value),
 
   or: _ => Ok(value),
-  zip: res => res.map(other => [value, other])
+  zip: res => res.map(other => [value, other]),
+
+  ok: () => Option.Some(value),
+  err: () => Option.None
 })
 
 /**
- * Err variant for the `Result` type.
+ * `Err` variant for the `Result` type.
  * Represents a failed operation.
  * @template T,E
  * @type {(error: E) => Result<T,E>}
@@ -89,7 +93,10 @@ const Err = error => ({
   then_wrap: _ => Err(error),
 
   or: res => res,
-  zip: _ => Err(error)
+  zip: _ => Err(error),
+
+  ok: () => Option.None,
+  err: () => Option.Some(error)
 })
 
 /**

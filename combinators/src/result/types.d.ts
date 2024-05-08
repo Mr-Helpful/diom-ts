@@ -1,6 +1,9 @@
 import { inspect } from 'node:util'
+import { Option } from '../option/types'
 
-/** A utility result type implementation */
+/** A utility result type implementation
+ * Heavily inspired by [this article](https://dev.to/rgeraldporter/building-expressive-monads-in-javascript-introduction-23b)
+ */
 export interface Result<T, E> {
   /** Displays the Result type and its value / error */
   toString(): String
@@ -39,6 +42,9 @@ export interface Result<T, E> {
 
   or<R>(res: Result<T, R>): Result<T, R>
   zip(res: Result<T, E>): Result<[T, T], E>
+
+  ok(): Option<T>
+  err(): Option<E>
 }
 
 export type ResultFrom<T, E> = T | Result<T, E>
