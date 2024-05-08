@@ -3,12 +3,14 @@
 /** @template I,O,E @typedef {import("./types").PFrom<I,O,E>} PFrom<I,O,E> */
 /** @template I,P @typedef {import("./types").AltParser<I,P>} AltParser<I,P> */
 /** @template I @typedef {import("./stream").Stream<I>} Stream<I> */
+/** @template T @typedef {import("./option/types").Option<T>} Option<T> */
 import {
   EofError,
   MismatchError,
   ParseError,
   PredicateError
 } from './errors/index'
+import { Option } from './option'
 import { Result } from './result'
 import { Stream } from './stream'
 
@@ -189,21 +191,38 @@ export class Parser extends Function {
     return this.maybe().alt(...parsers.map(this.maybe.call))
   }
 
+  /** Constructs that accepts either `this` or an empty string
+   * @return {Parser<I, Option<O>, E>}
+   */
+  opt() {
+    return new Parser(input => {
+      let result = this.parse(input.clone())
+      return Result.Ok([input, result.ok().map(([_, output]) => output)])
+    })
+  }
+
   /** Constructs a parser that applies `this` any number of times
-   * @param {[number] | [number, number]} range a range for a number of times that the parser will be called
+   * @param {[number] | [number, number]} range a range for a number of times that the parser will be called, defaults to any number of times
    * @return {Parser<I, O[], E>}
    */
   many(range = [0, Number.MAX_VALUE]) {
     const [start, end] = range.length === 1 ? [0, range[0]] : range
     return new Parser(input => {
       let outputs = []
+      /** @type {O} */
+      let output
       let i = 0
 
       try {
-        for(; i < end; i++) {
-          
+        for (; i < end; i++) {
+          ;[input, output] = this.parse(input).unwrap()
+          outputs.push(output)
         }
+      } catch (e) {
+        if (i < start) return Result.Err(e)
       }
+
+      return Result.Ok(outputs)
     })
   }
 
