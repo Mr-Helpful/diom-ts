@@ -1,6 +1,8 @@
 import { inspect } from 'node:util'
 
-/** @template I */
+/** A Parser encountered an invalid item whilst attempting to parse
+ * @template I
+ */
 export class PredicateError extends SyntaxError {
   /** @type {(value: I) => bool} */
   #predicate

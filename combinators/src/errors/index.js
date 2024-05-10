@@ -2,9 +2,9 @@ import dedent from 'dedent'
 import { inspect } from 'node:util'
 import { Stream } from '../stream'
 
-/** A ParseError should:
- * 1. have a position that it occurs at
- * 2. contain all expected next values
+/**
+ * The main type of Error that will be returned by Parsers
+ * Used to combine together errors that Parsers may encounter
  * @template {{toString(): string}} I
  * @template {Error} E
  */
@@ -18,23 +18,17 @@ export class ParseError extends SyntaxError {
 
   /**
    * @constructor
-   * @param {Stream<I>} input
-   * @param {E} error
+   * @param {Stream<I>} input the remaining input to the Parser
+   * @param {E} error the type of error that was encountered during parsing
    */
   constructor(input, error) {
     super()
     this.#input = input
-    this.push(error)
-  }
-
-  /** Converts from input and error values into a ParseError
-   * @param {I} input
-   * @param {Error} err
-   */
-  static from(input, err) {
-    return typeof err === 'object' && err instanceof ParseError
-      ? err
-      : new ParseError(input, err)
+    if (typeof error === 'object' && error instanceof ParseError) {
+      this.#errors = error.clone().#errors
+    } else {
+      this.push(error)
+    }
   }
 
   toString() {
@@ -42,7 +36,7 @@ export class ParseError extends SyntaxError {
     const current = this.#input.current?.toString() ?? '<EOF>'
     const trace_str = this.#trace.join(' -> ') || '<empty>'
     const error_str = Array.from(this.#errors.values()).map(err =>
-      err instanceof Array ? err.map(err => `- ${err}`).join('\n') : `${err}`
+      Array.isArray(err) ? err.map(err => `- ${err}`).join('\n') : `${err}`
     )
     return dedent`
       ParseError: parser ${parser} failed at ${current}, due to:
@@ -78,7 +72,7 @@ export class ParseError extends SyntaxError {
 
   /** Combines this error with another and returns the result.
    * Pretty much solely used by the `alt` combinator to accumulate errors
-   * @template E2
+   * @template {Error} E2
    * @param {E2} error the error to merge with
    * @return {ParseError<I,E|E2>} for use in method chaining
    */

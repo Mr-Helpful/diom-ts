@@ -1,4 +1,11 @@
+/** @template T @typedef {import("../option/types").Option<T>} Option<T> */
+import { Option } from '../option'
+
 /**
+ * An wrapper over an iterator that provides position and current symbol.
+ *
+ * This is useful when determining whether a parser has consumed input
+ * and in printing certain errors produced by parsing.
  * @template I
  * @extends {Iterable<I>}
  */
@@ -11,11 +18,11 @@ export class Stream extends Iterable {
     return typeof value === 'object' && value instanceof Stream
   }
 
-  /** @type {Iterable<I>} */
+  /** @type {Iterable<I>} the wrapped input */
   #input
-  /** @type {I | undefined} */
-  #current = undefined
-  /** @type {number} */
+  /** @type {Option<I>} the current item */
+  #current = Option.None
+  /** @type {number} the current position */
   #position = 0
 
   get position() {
@@ -25,20 +32,14 @@ export class Stream extends Iterable {
     return this.#current
   }
 
-  /** @param {Iterable<I>} input */
+  /** @param {Iterable<I>} input the input iterator to use */
   constructor(input) {
     super()
-    this.#input = input
-  }
-
-  /** Converts iterable values into a Stream
-   * @param {Iterable<I> | Stream<I>} iter */
-  static from(iter) {
-    return Stream.isStream(iter) ? iter : new Stream(iter)
+    this.#input = Stream.isStream(input) ? input.clone().#input : input
   }
 
   /** Helper method to clone this iterator
-   * @todo it's possible to do some clever stuff where cloned
+   * @note it's possible to do some clever stuff where cloned
    * values use the original iterator and keep a temporary stack
    * which is then consumed to catch up, saving memory
    * @return {this}

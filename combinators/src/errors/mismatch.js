@@ -1,6 +1,8 @@
 import { inspect } from 'node:util'
 
-/** @template I */
+/** A Parser encountered an incorrect item whilst attempting to parse
+ * @template I
+ */
 export class MismatchError extends SyntaxError {
   /** @type {Set<I>} */
   #expected

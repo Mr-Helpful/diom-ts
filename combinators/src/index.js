@@ -47,7 +47,7 @@ export class Parser extends Function {
 
   /** @constructor @param {PFunc<I,O,E>} f */
   constructor(f) {
-    return Object.setPrototypeOf(f, new.target.prototype)
+    return Object.assign(f, new.target.prototype)
   }
 
   /** Converts from function based parsers.
@@ -201,7 +201,7 @@ export class Parser extends Function {
     })
   }
 
-  /** Constructs a parser that applies `this` any number of times
+  /** Constructs a parser that applies `this` some number of times
    * @param {[number] | [number, number]} range a range for a number of times that the parser will be called, defaults to any number of times
    * @return {Parser<I, O[], E>}
    */

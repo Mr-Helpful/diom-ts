@@ -17,7 +17,7 @@ const isOption = value =>
 
 /**
  * `Some` variant for the `Option` type.
- * Represents a successful operation.
+ * Represents the presence of a value.
  * @type {(value: T) => Option<T>}
  */
 const Some = value => ({
@@ -48,7 +48,7 @@ const Some = value => ({
 
 /**
  * `None` variant for the `Option` type.
- * Represents a failed operation.
+ * Represents the absence of a value.
  * @template T
  * @type {Option<T>}
  */
