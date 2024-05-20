@@ -13,13 +13,26 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Features/Syntax/Monads.md",
+                "file": "Features/Syntax/Simplified function calls.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "e3d21474c85b9a36",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Features/Semantics/Functions as Type instances.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -85,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Features/Syntax/Monads.md",
+                "file": "Features/Semantics/Functions as Type instances.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Features/Syntax/Monads.md",
+                "file": "Features/Semantics/Functions as Type instances.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Features/Syntax/Monads.md"
+                "file": "Features/Semantics/Functions as Type instances.md"
               }
             }
           }
@@ -146,11 +159,15 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "1dab35d76600ea80",
+  "active": "e3d21474c85b9a36",
   "lastOpenFiles": [
-    "Features/Syntax/Implicit `.` in methods.md",
-    "Features/Syntax/Monads.md",
+    "Features/Syntax/Simplified function calls.md",
+    "Features/Semantics/Functions as Type instances.md",
     "Features/Syntax/Expression Based.md",
+    "Features/Semantics/Operator overloading.md",
+    "Features/Semantics/Function overloading.md",
+    "Features/Syntax/Monads.md",
+    "Features/Syntax/Implicit `.` in methods.md",
     "Planning.canvas"
   ]
 }
