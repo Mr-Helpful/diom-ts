@@ -5,8 +5,9 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "main": "node src",
-    "test": "node --test test"
+    "build": "npx tsc",
+    "main": "npm run build && node target/src",
+    "test": "npm run build && node --test target/test"
   },
   "repository": {
     "type": "git",
@@ -25,5 +26,10 @@
   "homepage": "https://github.com/Mr-Helpful/diom-ts#readme",
   "dependencies": {
     "dedent": "^1.5.3"
+  },
+  "devDependencies": {
+    "@tsconfig/node20": "^20.1.4",
+    "@types/node": "^20.12.11",
+    "typescript": "^5.4.5"
   }
 }

@@ -1,29 +1,25 @@
-/** @template T @typedef {import("../option/types").Option<T>} Option<T> */
-import { Option } from '../option'
+import { None, Option, Some } from '../option/index.js'
 
 /**
  * An wrapper over an iterator that provides position and current symbol.
  *
  * This is useful when determining whether a parser has consumed input
  * and in printing certain errors produced by parsing.
- * @template I
- * @extends {Iterable<I>}
  */
-export class Stream extends Iterable {
+export class Stream<I> implements Iterable<I> {
   /** Tests whether a value is a stream
    * @param value
-   * @return {value is Stream<any>}
    */
-  static isStream(value) {
+  static isStream(value: any): value is Stream<any> {
     return typeof value === 'object' && value instanceof Stream
   }
 
-  /** @type {Iterable<I>} the wrapped input */
-  #input
-  /** @type {Option<I>} the current item */
-  #current = Option.None
-  /** @type {number} the current position */
-  #position = 0
+  /** the wrapped input */
+  #input: Iterable<I>
+  /** the current item */
+  #current: Option<I> = None
+  /** the current position */
+  #position: number = 0
 
   get position() {
     return this.#position
@@ -32,9 +28,8 @@ export class Stream extends Iterable {
     return this.#current
   }
 
-  /** @param {Iterable<I>} input the input iterator to use */
-  constructor(input) {
-    super()
+  /** @param input the input iterator to use */
+  constructor(input: Iterable<I>) {
     this.#input = Stream.isStream(input) ? input.clone().#input : input
   }
 
@@ -50,10 +45,10 @@ export class Stream extends Iterable {
 
   *[Symbol.iterator]() {
     for (const item of this.#input) {
-      this.#current = item
-      yield this.#current
+      this.#current = Some(item)
+      yield this.#current.unwrap()
       this.#position += 1
     }
-    this.#current = undefined
+    this.#current = None
   }
 }

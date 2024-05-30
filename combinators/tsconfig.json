@@ -1,0 +1,15 @@
+{
+  "extends": "@tsconfig/node20/tsconfig.json",
+  "compilerOptions": {
+    /* Visit https://aka.ms/tsconfig to read more about this file */
+    /* Projects */
+    "incremental": true, /* Save .tsbuildinfo files to allow for incremental compilation of projects. */
+    /* Modules */
+    "rootDirs": [
+      "src",
+      "test"
+    ], /* Specify the root folder within your source files. */
+    "outDir": "target",
+    "declaration": true,
+  }
+}
