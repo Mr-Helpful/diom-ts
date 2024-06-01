@@ -1,6 +1,5 @@
 import dedent from 'dedent'
-import { inspect } from 'node:util'
-import { None, Some, type Option } from '../option/index.js'
+import { None, Some, type Option } from './option.js'
 
 const ResultSymbol = Symbol('Result')
 
@@ -12,7 +11,6 @@ export interface Result<T, E> {
 
   /** Displays the Result type and its value / error */
   toString(): string
-  [inspect.custom](): string
 
   /** Whether this result contains the `Ok` variant */
   is_ok(): this is Result<T, never>
@@ -23,10 +21,22 @@ export interface Result<T, E> {
   /** Whether the `Err` variant satisfies `f` */
   is_err_and(f: (error: E) => boolean): boolean
 
+  /** Whether the `Result` contains the same value as `other`.
+   * This is useful as it's actually difficult to test the equality of
+   * `Result`s with `===` as they can have a value captured by closure.
+   */
+  eq(res: Result<T, E>): boolean
+  /** Whether the `Result` is the same value as `other`, using `eq` */
+  eq_with(
+    res: Result<T, E>,
+    ok_eq: (x: T, y: T) => boolean,
+    err_eq: (x: E, y: E) => boolean
+  ): boolean
+
   /** Unwraps the `Ok` value or throws the contained error */
   unwrap(): T
   /** Unwraps the contained value or returns default value `d` */
-  unwrap_or(d: T): T
+  unwrap_or<U>(d: U): T | U
   /** Unwraps the `Err` value or throws a generic error */
   unwrap_err(): E
 
@@ -39,16 +49,18 @@ export interface Result<T, E> {
    * or returns default value `d` if the result contains an error.
    *
    */
-  map_or<R>(f: (value: T) => R, d: R): R
+  map_or<R, U>(f: (value: T) => R, d: U): R | U
 
   then<R, E2>(f: (value: T) => Result<R, E2>): Result<R, E | E2>
   then_err<R, T2>(f: (value: E) => Result<T2, R>): Result<T | T2, R>
   then_wrap<R>(f: (value: T) => R): Result<R, E>
 
-  or<R>(res: Result<T, R>): Result<T, R>
-  zip(res: Result<T, E>): Result<[T, T], E>
+  or<U>(res: Result<U, any>): Result<T | U, E>
+  zip<U, R>(res: Result<U, R>): Result<[T, U], E | R>
 
+  /** Convert an `Ok` into a `Some` */
   ok(): Option<T>
+  /** Convert an `Err` into a `Some` */
   err(): Option<E>
 }
 
@@ -72,14 +84,14 @@ export const Ok = <T>(value: T): Result<T, never> => ({
   [ResultSymbol]: true,
 
   toString: () => `Result.Ok(${value})`,
-  [inspect.custom]() {
-    return this.toString()
-  },
 
   is_ok: () => true,
   is_err: () => false,
   is_ok_and: f => f(value),
   is_err_and: _ => false,
+
+  eq: res => res.is_ok_and(v => value === v),
+  eq_with: (res, ok_eq, _) => res.is_ok_and(v => ok_eq(value, v)),
 
   unwrap: () => value,
   unwrap_or: _ => value,
@@ -99,7 +111,7 @@ export const Ok = <T>(value: T): Result<T, never> => ({
   zip: res => res.map(other => [value, other]),
 
   ok: () => Some(value),
-  err: () => None
+  err: () => None as Option<never>
 })
 
 /**
@@ -110,14 +122,14 @@ export const Err = <E>(error: E): Result<never, E> => ({
   [ResultSymbol]: true,
 
   toString: () => `Result.Err(${error})`,
-  [inspect.custom]() {
-    return this.toString()
-  },
 
   is_ok: () => false,
   is_err: () => true,
   is_ok_and: _ => false,
   is_err_and: f => f(error),
+
+  eq: res => res.is_err_and(e => error === e),
+  eq_with: (res, _, err_eq) => res.is_err_and(e => err_eq(error, e)),
 
   unwrap() {
     throw error
@@ -136,7 +148,7 @@ export const Err = <E>(error: E): Result<never, E> => ({
   or: res => res,
   zip: _ => Err(error),
 
-  ok: () => None,
+  ok: () => None as Option<never>,
   err: () => Some(error)
 })
 

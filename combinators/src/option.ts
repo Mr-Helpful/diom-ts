@@ -1,5 +1,4 @@
-import { inspect } from 'node:util'
-import { Err, Ok, type Result } from '../result/index.js'
+import { Err, Ok, type Result } from './result.js'
 
 const OptionSymbol = Symbol('Option')
 
@@ -11,19 +10,26 @@ export interface Option<T> {
 
   /** Displays the `Option` type and its value */
   toString(): string
-  [inspect.custom](): string
 
   /** Whether this option contains the `Some` variant */
-  is_some(): boolean
+  is_some(): this is Option<T>
   /** Whether this option contains the `None` variant */
-  is_none(): boolean
+  is_none(): this is Option<never>
   /** Whether the `Some` variant satisfies `f` */
   is_some_and(f: (value: T) => boolean): boolean
+
+  /** Whether the `Option` contains the same value as `other`.
+   * This is useful as it's actually difficult to test the equality of
+   * `Option`s with `===` as they can have a value captured by closure.
+   */
+  eq(opt: Option<T>): boolean
+  /** Whether the `Option` is the same value as `other`, using `eq` */
+  eq_with(opt: Option<T>, eq: (x: T, y: T) => boolean): boolean
 
   /** Unwraps the `Some` value or throws an error */
   unwrap(): T
   /** Unwraps the contained value or returns default value `d` */
-  unwrap_or(d: T): T
+  unwrap_or<U>(d: U): T | U
 
   /** Modifies the contained value of a `Option` */
   map<R>(f: (value: T) => R): Option<R>
@@ -31,12 +37,15 @@ export interface Option<T> {
    * Applies the `f` to the contained value,
    * or returns default value `d` if the option is `None`.
    */
-  map_or<R>(f: (value: T) => R, d: R): R
+  map_or<R, U>(f: (value: T) => R, d: U): R | U
 
+  /** Applies `f` to the contained value of `Some` and flattens */
   then<R>(f: (value: T) => Option<R>): Option<R>
 
-  or(res: Option<T>): Option<T>
-  zip(res: Option<T>): Option<[T, T]>
+  /** Returns `opt` when from a `None` variant */
+  or<U>(opt: Option<U>): Option<T | U>
+  /** Returns a tuple of values contained if both are the `Some` variant */
+  zip<U>(opt: Option<U>): Option<[T, U]>
 
   /** Converts the contained value into a `Result.Ok` variant */
   ok<E>(err: E): Result<T, E>
@@ -56,13 +65,13 @@ export const Some = <T>(value: T): Option<T> => ({
   [OptionSymbol]: true,
 
   toString: () => `Option.Some(${value})`,
-  [inspect.custom]() {
-    return this.toString()
-  },
 
   is_some: () => true,
   is_none: () => false,
   is_some_and: f => f(value),
+
+  eq: opt => opt.is_some_and(v => value === v),
+  eq_with: (opt, eq) => opt.is_some_and(v => eq(value, v)),
 
   unwrap: () => value,
   unwrap_or: _ => value,
@@ -82,17 +91,17 @@ export const Some = <T>(value: T): Option<T> => ({
  * `None` variant for the `Option` type.
  * Represents the absence of a value.
  */
-export const None: Option<never> = {
+export const None: Option<any> = {
   [OptionSymbol]: true,
 
   toString: () => `Option.None`,
-  [inspect.custom]() {
-    return this.toString()
-  },
 
   is_some: () => false,
   is_none: () => true,
   is_some_and: _ => false,
+
+  eq: opt => opt.is_none(),
+  eq_with: (opt, _) => opt.is_none(),
 
   unwrap() {
     throw new TypeError('Cannot unwrap `None` value')

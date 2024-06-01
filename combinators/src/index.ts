@@ -5,9 +5,9 @@ import {
   ParseError,
   PredicateError
 } from './errors/index.js'
-import { Option } from './option/index.js'
-import { Err, Ok, Result, isResult } from './result/index.js'
-import { Stream } from './stream/index.js'
+import { Option } from './option.js'
+import { Err, Ok, Result, isResult } from './result.js'
+import { Stream } from './stream.js'
 import type {
   AltParser,
   ExtractError,

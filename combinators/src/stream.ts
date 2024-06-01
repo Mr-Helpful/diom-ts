@@ -1,4 +1,4 @@
-import { None, Option, Some } from '../option/index.js'
+import { None, Option, Some } from './option.js'
 
 /**
  * An wrapper over an iterator that provides position and current symbol.

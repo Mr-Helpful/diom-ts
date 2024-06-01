@@ -1,6 +1,6 @@
 import dedent from 'dedent'
 import { inspect } from 'node:util'
-import { Stream } from '../stream/index.js'
+import { Stream } from '../stream.js'
 import { ToString } from '../types.js'
 
 /**

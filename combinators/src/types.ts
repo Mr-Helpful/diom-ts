@@ -1,7 +1,7 @@
 import { ParseError } from './errors/index.js'
 import { Parser } from './index.js'
-import { Result, ResultFrom } from './result/index.js'
-import { Stream } from './stream/index.js'
+import { Result, ResultFrom } from './result.js'
+import { Stream } from './stream.js'
 
 export interface ToString {
   toString(): string
