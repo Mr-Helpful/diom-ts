@@ -11,5 +11,11 @@
     ], /* Specify the root folder within your source files. */
     "outDir": "target",
     "declaration": true,
+    // define alias for `src` path, primarily to simplify imports in testing
+    "paths": {
+      "#src/*": [
+        "./src/*"
+      ]
+    }
   }
 }

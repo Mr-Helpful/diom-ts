@@ -6,8 +6,12 @@
   "type": "module",
   "scripts": {
     "build": "npx tsc",
-    "main": "npm run build && node target/src",
-    "test": "npm run build && node --test target/test"
+    "watch": "npx tsc --watch",
+    "test": "npm run build && node --test target/test/**"
+  },
+  "imports": {
+    "// import alias to help with testing": "",
+    "#src/*": "./target/src/*"
   },
   "repository": {
     "type": "git",
